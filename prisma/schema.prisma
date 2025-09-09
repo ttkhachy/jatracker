@@ -13,3 +13,42 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  // User details
+  id    Int     @id
+  email String  @unique
+  name  String? // ? mean this field is optional and can be null
+
+
+
+  appliedAt DateTime
+}
+
+model Application {
+  // A single application by a user
+  id       Int    @id
+  jobTitle String
+  company  String
+}
+
+enum Status {
+  APPLIED
+  INTERVIEW
+  OFFERED
+  REJECTED
+}
+
+model Account {
+  id String @id @default(cuid()) // cuid = Collision-Resistant Unique Identifier
+}
+
+model Session {
+  id String @id @default(cuid())
+}
+
+model VerificationToken {
+  identifier String
+  token String @unique
+
+}
