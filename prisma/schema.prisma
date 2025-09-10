@@ -16,20 +16,26 @@ datasource db {
 
 model User {
   // User details
-  id    Int     @id
-  email String  @unique
-  name  String? // ? mean this field is optional and can be null
-
-
-
-  appliedAt DateTime
+  id           String        @id
+  email        String        @unique
+  name         String? // ? mean this field is optional and can be null
+  account      Account?
+  session      Session?
+  applications Application[]
+  createdAt    DateTime      @default(now())
 }
 
 model Application {
   // A single application by a user
-  id       Int    @id
-  jobTitle String
-  company  String
+  id        String   @id
+  userId    String   @unique
+  jobTitle  String
+  company   String
+  status    Status   @default(APPLIED)
+  link      String?
+  user      User     @relation(fields: [userId], references: [id])
+  appliedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Status {
@@ -40,15 +46,22 @@ enum Status {
 }
 
 model Account {
-  id String @id @default(cuid()) // cuid = Collision-Resistant Unique Identifier
+  // this needs more variables realted to session etc. e.g expiry, token
+  id          String @id @default(cuid()) // cuid = Collision-Resistant Unique Identifier
+  userId      String @unique
+  accountName String @unique
+  user        User   @relation(fields: [userId], references: [id])
 }
 
 model Session {
-  id String @id @default(cuid())
+  // needs more variables when i sort out the authentication process
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
 }
 
 model VerificationToken {
+  // needs more variables when i sort out the authentication process
   identifier String
-  token String @unique
-
+  token      String @unique
 }
